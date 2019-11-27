@@ -50,6 +50,35 @@ GO
 
 -- =============================================
 -- Author:		Tomás A. Cardoner
+-- Create date: 2019-11-16
+-- Description:	Returns an integer with complete elapsed years
+-- =============================================
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'dbo.udf_GetElapsedCompleteYearsFromDates') AND type = N'FN')
+	DROP FUNCTION dbo.udf_GetElapsedCompleteYearsFromDates
+GO
+
+CREATE FUNCTION udf_GetElapsedCompleteYearsFromDates
+(
+	@StartDate date,
+	@EndDate date
+) RETURNS smallint
+	AS
+BEGIN
+	DECLARE @FechaTemp datetime
+	DECLARE @YearsElapsed smallint
+
+	SELECT @FechaTemp = @StartDate
+
+	SELECT @YearsElapsed = DATEDIFF(yy, @FechaTemp, @EndDate) - CASE WHEN (MONTH(@StartDate) > MONTH(@EndDate)) OR (MONTH(@StartDate) = MONTH(@EndDate) AND DAY(@StartDate) > DAY(@EndDate)) THEN 1 ELSE 0 END
+
+	RETURN @YearsElapsed
+END
+GO
+
+
+
+-- =============================================
+-- Author:		Tomás A. Cardoner
 -- Create date: 2018-09-10
 -- Description:	Returns a varchar that express the elapsed time in years, months and days
 -- =============================================
