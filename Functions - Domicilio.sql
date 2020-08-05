@@ -22,10 +22,11 @@ CREATE FUNCTION udf_GetDomicilioCalleCompleto
 	@Piso varchar(10),
 	@Departamento varchar(10),
 	@Calle2 varchar(50),
-	@Calle3 varchar(50)
-) RETURNS varchar(250) AS
+	@Calle3 varchar(50),
+	@Barrio varchar(50)
+) RETURNS varchar(300) AS
 BEGIN
-	DECLARE @ReturnValue varchar(250)
+	DECLARE @ReturnValue varchar(300)
 
 	SET @ReturnValue = ''
 
@@ -101,6 +102,21 @@ BEGIN
 				SET @ReturnValue = @ReturnValue + ' esq. ' + @Calle2
 				END
 			END
+
+		--SI ESPECIFICA EL BARRIO
+		IF @Barrio IS NOT NULL
+			BEGIN
+			SET @ReturnValue = @ReturnValue + ' - ' + @Barrio
+			END
+
+		END
+	ELSE
+		BEGIN
+		--SI ESPECIFICA EL BARRIO
+		IF @Barrio IS NOT NULL
+			BEGIN
+			SET @ReturnValue = @Barrio
+			END
 		END
 	
 	RETURN @ReturnValue
@@ -164,6 +180,7 @@ CREATE FUNCTION udf_GetDomicilioCalleLocalidadCompleto
 	@Departamento varchar(10),
 	@Calle2 varchar(50),
 	@Calle3 varchar(50),
+	@Barrio varchar(50),
 	@IDProvincia tinyint,
 	@IDLocalidad smallint
 ) RETURNS varchar(400) AS
@@ -171,7 +188,7 @@ BEGIN
 	DECLARE @ReturnValue varchar(400)
 	DECLARE @LocalidadNombre varchar(100)
 
-	SET @ReturnValue = dbo.udf_GetDomicilioCalleCompleto(@Calle1, @Numero, @Piso, @Departamento, @Calle2, @Calle3)
+	SET @ReturnValue = dbo.udf_GetDomicilioCalleCompleto(@Calle1, @Numero, @Piso, @Departamento, @Calle2, @Calle3, @Barrio)
 	SET @LocalidadNombre = (SELECT Nombre FROM Localidad WHERE IDProvincia = @IDProvincia AND IDLocalidad = @IDLocalidad)
 	IF @ReturnValue <> ''
 		BEGIN
@@ -204,6 +221,7 @@ CREATE FUNCTION udf_GetDomicilioCompleto
 	@Departamento varchar(10),
 	@Calle2 varchar(50),
 	@Calle3 varchar(50),
+	@Barrio varchar(50),
 	@CodigoPostal varchar(8),
 	@IDProvincia tinyint,
 	@IDLocalidad smallint
@@ -215,7 +233,7 @@ BEGIN
 
 	SET @ProvinciaNombre = (SELECT Nombre FROM Provincia WHERE IDProvincia = @IDProvincia)
 
-	SET @ReturnValue = dbo.udf_GetDomicilioCalleCompleto(@Calle1, @Numero, @Piso, @Departamento, @Calle2, @Calle3)
+	SET @ReturnValue = dbo.udf_GetDomicilioCalleCompleto(@Calle1, @Numero, @Piso, @Departamento, @Calle2, @Calle3, @Barrio)
 	SET @CodigoPostalLocalidad = dbo.udf_GetCodigoPostalLocalidad(@CodigoPostal, @IDProvincia, @IDLocalidad)
 	IF @ReturnValue <> ''
 		BEGIN
