@@ -9,13 +9,14 @@ GO
 -- Author:		Tomás A. Cardoner
 -- Create date: 2013-08-25
 -- Updates: 2015-06-26
+--          2020-09-26 - se cambió el nombre de la función y otras mínimas correcciones
 -- Description:	Devuelve el Domicilio (Calle) completo
 -- =============================================
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'dbo.udf_GetDomicilioCalleCompleto') AND type = N'FN')
-	DROP FUNCTION dbo.udf_GetDomicilioCalleCompleto
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'dbo.udfObtenerDomicilioCalleCompleto') AND type = N'FN')
+	DROP FUNCTION dbo.udfObtenerDomicilioCalleCompleto
 GO
 
-CREATE FUNCTION udf_GetDomicilioCalleCompleto 
+CREATE FUNCTION udfObtenerDomicilioCalleCompleto 
 (	
 	@Calle1 varchar(100),
 	@Numero varchar(10),
@@ -30,27 +31,27 @@ BEGIN
 
 	SET @ReturnValue = ''
 
-	--VERIFICO QUE ESTÉ ESPECIFICADA COMO MÍNIMO LA CALLE1
+	-- Verifico que, al menos, esté especificada la calle 1
 	IF @Calle1 IS NOT NULL
 		BEGIN
 		SET @ReturnValue = @Calle1
 
-		--SI ESTÁ ESPECIFICADA LA ALTURA
+		-- Verifico si se especificó la altura
 		IF @Numero IS NOT NULL
 			BEGIN
-			--VERIFICO SI NO ES UNA RUTA
+			-- Verifico si es una ruta
 			IF UPPER(SUBSTRING(@Calle1, 1, 5)) = 'RUTA '
 				BEGIN
-				SET @ReturnValue = @ReturnValue + ' Km. ' + @Numero
+				SET @ReturnValue = @ReturnValue + ' km. ' + @Numero
 				END
 			ELSE
 				BEGIN
-				--O ES UNA 'CALLE'
+				-- Verifico si está la palabra 'calle'
 				IF UPPER(SUBSTRING(@Calle1, 1, 6)) = 'CALLE '
 					BEGIN
 					IF ISNUMERIC(SUBSTRING(@Calle1, 7, 50)) = 1
 						BEGIN
-						SET @ReturnValue = @ReturnValue + ' N° ' + @Numero
+						SET @ReturnValue = @ReturnValue + ' n° ' + @Numero
 						END
 					ELSE
 						BEGIN
@@ -59,10 +60,10 @@ BEGIN
 					END
 				ELSE
 					BEGIN
-					--O ES UN NÚMERO SÓLO (CALLE)
+					-- Verifico si el nombre de la calle es sólo un número
 					if ISNUMERIC(@Calle1) = 1
 						BEGIN
-						SET @ReturnValue = 'Calle ' + @Calle1 + ' N° ' + @Numero
+						SET @ReturnValue = 'Calle ' + @Calle1 + ' n° ' + @Numero
 						END
 					ELSE
 						BEGIN
@@ -71,26 +72,26 @@ BEGIN
 					END
 				END
 
-			--SI ESPECIFICA EL PISO
+			-- Verifico se esoecifica el piso
 			IF @Piso IS NOT NULL
 				BEGIN
 				if ISNUMERIC(@Piso) = 1
 					BEGIN
-					SET @ReturnValue = @ReturnValue + ' P.' + @Piso + '°'
+					SET @ReturnValue = @ReturnValue + ' p.' + @Piso + '°'
 					END
 				ELSE
 					BEGIN
 					SET @ReturnValue = @ReturnValue + ' ' + @Piso
 					END
 				END
-			--SI ESPECIFICA EL DEPARTAMENTO
+			-- Verifico si especifica el departamento
 			IF @Departamento IS NOT NULL
 				BEGIN
-				SET @ReturnValue = @ReturnValue + ' Dto. "' + @Departamento + '"'
+				SET @ReturnValue = @ReturnValue + ' dto. "' + @Departamento + '"'
 				END
 			END
 
-		--SI ESPECIFICA LA CALLE2
+		-- Verifico si especifica la calle 2 y la calle 3
 		IF @Calle2 IS NOT NULL
 			BEGIN
 			IF @Calle3 IS NOT NULL
@@ -103,7 +104,7 @@ BEGIN
 				END
 			END
 
-		--SI ESPECIFICA EL BARRIO
+		-- Verifico si especifica el barrio
 		IF @Barrio IS NOT NULL
 			BEGIN
 			SET @ReturnValue = @ReturnValue + ' - ' + @Barrio
