@@ -61,7 +61,7 @@ BEGIN
 				ELSE
 					BEGIN
 					-- Verifico si el nombre de la calle es sólo un número
-					if ISNUMERIC(@Calle1) = 1
+					IF ISNUMERIC(@Calle1) = 1
 						BEGIN
 						SET @ReturnValue = 'Calle ' + @Calle1 + ' n° ' + @Numero
 						END
@@ -72,10 +72,10 @@ BEGIN
 					END
 				END
 
-			-- Verifico se esoecifica el piso
+			-- Verifico si especifica el piso
 			IF @Piso IS NOT NULL
 				BEGIN
-				if ISNUMERIC(@Piso) = 1
+				IF ISNUMERIC(@Piso) = 1
 					BEGIN
 					SET @ReturnValue = @ReturnValue + ' p.' + @Piso + '°'
 					END
@@ -87,7 +87,7 @@ BEGIN
 			-- Verifico si especifica el departamento
 			IF @Departamento IS NOT NULL
 				BEGIN
-				SET @ReturnValue = @ReturnValue + ' dto. "' + @Departamento + '"'
+				SET @ReturnValue = @ReturnValue + ' dto."' + @Departamento + '"'
 				END
 			END
 
@@ -95,12 +95,87 @@ BEGIN
 		IF @Calle2 IS NOT NULL
 			BEGIN
 			IF @Calle3 IS NOT NULL
+				-- Especifica calle 2 y calle 3
 				BEGIN
-				SET @ReturnValue = @ReturnValue + ' entre ' + @Calle2 + ' y ' + @Calle3
+				IF ISNUMERIC(@Calle1) = 1
+					BEGIN
+					SET @ReturnValue = @ReturnValue + ' entre ' + @Calle2 + ' y ' + @Calle3
+					END
+				ELSE
+					BEGIN
+					IF ISNUMERIC(@Calle2) = 1
+						BEGIN
+						IF ISNUMERIC(@Calle3) = 1
+							BEGIN
+							SET @ReturnValue = @ReturnValue + ' entre Calles ' + @Calle2 + ' y ' + @Calle3
+							END
+						ELSE
+							BEGIN
+							SET @ReturnValue = @ReturnValue + ' entre Calle ' + @Calle2 + ' y ' + @Calle3
+							END
+						END
+					ELSE
+						BEGIN
+						IF ISNUMERIC(@Calle3) = 1
+							BEGIN
+							SET @ReturnValue = @ReturnValue + ' entre ' + @Calle2 + ' y Calle ' + @Calle3
+							END
+						ELSE
+							BEGIN
+							SET @ReturnValue = @ReturnValue + ' entre ' + @Calle2 + ' y ' + @Calle3
+							END
+						END
+					END
 				END
 			ELSE
+				-- Sólo especifica la calle 2
 				BEGIN
-				SET @ReturnValue = @ReturnValue + ' esq. ' + @Calle2
+				IF @Numero IS NOT NULL
+					-- Ya se procesó el nombre de la calle 1, sólo proceso el de la calle 2
+					BEGIN
+					IF ISNUMERIC(@Calle1) = 0 AND ISNUMERIC(@Calle2) = 1
+						BEGIN
+						SET @ReturnValue = @ReturnValue + ' esq. Calle ' + @Calle2
+						END
+					ELSE
+						BEGIN
+						SET @ReturnValue = @ReturnValue + ' esq. ' + @Calle2
+						END
+					END
+				ELSE
+					-- Todavía no se procesó la calle 1, así que proceso ambas
+					BEGIN
+					IF ISNUMERIC(@Calle1) = 1
+						BEGIN
+						SET @ReturnValue = 'Calle ' + @Calle1 + ' esq. ' + @Calle2
+						END
+					ELSE
+						BEGIN
+						IF ISNUMERIC(@Calle2) = 1
+							BEGIN
+							SET @ReturnValue = @Calle1 + ' esq. Calle ' + @Calle2
+							END
+						ELSE
+							BEGIN
+							SET @ReturnValue = @Calle1 + ' esq. ' + @Calle2
+							END
+						END
+					END
+				END
+			END
+		ELSE
+			-- No especifica la calle 2 pero hay que verificar la calle 1
+			BEGIN
+			IF @Numero IS NULL
+				BEGIN
+				IF ISNUMERIC(@Calle1) = 1
+					BEGIN
+					SET @ReturnValue = 'Calle ' + @Calle1
+					END
+				ELSE
+					BEGIN
+					SET @ReturnValue = @Calle1
+					END
 				END
 			END
 

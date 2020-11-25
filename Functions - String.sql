@@ -10,11 +10,11 @@ GO
 -- Create date: 2019-09-01
 -- Description:	Returns the input string as Camel Case
 -- =============================================
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'dbo.udf_StringCamelCase') AND type = N'FN')
-	DROP FUNCTION dbo.udf_StringCamelCase
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'dbo.udfStringCamelCase') AND type = N'FN')
+	DROP FUNCTION dbo.udfStringCamelCase
 GO
 
-CREATE FUNCTION udf_StringCamelCase
+CREATE FUNCTION udfStringCamelCase
 	(@InputString varchar(8000))
 	RETURNS varchar(8000) AS
 
@@ -55,11 +55,11 @@ GO
 -- Create date: 2019-09-02
 -- Description:	Returns the input string padded to the right
 -- =============================================
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'dbo.udf_StringPadLeft') AND type = N'FN')
-	DROP FUNCTION dbo.udf_StringPadLeft
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'dbo.udfStringPadLeft') AND type = N'FN')
+	DROP FUNCTION dbo.udfStringPadLeft
 GO
 
-CREATE FUNCTION udf_StringPadLeft
+CREATE FUNCTION udfStringPadLeft
 (
 	@InputString varchar(8000),
 	@TotalWidth tinyint,

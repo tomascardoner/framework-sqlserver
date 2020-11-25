@@ -91,7 +91,7 @@ CREATE FUNCTION udf_GetElapsedYearsMonthsAndDaysFromDays
 	@DaysElapsed smallint
 ) RETURNS varchar(100) AS
 BEGIN
-	DECLARE @DaysInAYear smallint
+	DECLARE @DaysInAYear decimal(10, 2)
 
 	DECLARE @YearsElapsed smallint
 	DECLARE @MonthsElapsed smallint
@@ -104,8 +104,8 @@ BEGIN
 		SET @DaysInAYear = 365
 
 	-- GETS ELAPSED YEARS AND THE REMAINING DAYS
-	SET @YearsElapsed = @DaysElapsed / 365.25
-	SET @DaysElapsed = @DaysElapsed % 365.25
+	SET @YearsElapsed = @DaysElapsed / DaysInAYear
+	SET @DaysElapsed = @DaysElapsed % DaysInAYear
 
 	-- GET ELAPSED MONTHS AND THE REMAINING DAYS
 	SET @MonthsElapsed = @DaysElapsed / 30
