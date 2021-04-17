@@ -207,11 +207,11 @@ GO
 -- Create date: 2013-08-25
 -- Description:	Devuelve el Código Postal y la Localidad formateados
 -- =============================================
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'dbo.udf_GetCodigoPostalLocalidad') AND type = N'FN')
-	DROP FUNCTION dbo.udf_GetCodigoPostalLocalidad
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'dbo.udfObtenerCodigoPostalLocalidad') AND type = N'FN')
+	DROP FUNCTION dbo.udfObtenerCodigoPostalLocalidad
 GO
 
-CREATE FUNCTION udf_GetCodigoPostalLocalidad 
+CREATE FUNCTION udfObtenerCodigoPostalLocalidad 
 (	
 	@CodigoPostal varchar(8),
 	@IDProvincia tinyint,
@@ -244,11 +244,11 @@ GO
 -- Create date: 2016-12-31
 -- Description:	Devuelve el Domicilio (Calle + Localidad) completo
 -- =============================================
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'dbo.udf_GetDomicilioCalleLocalidadCompleto') AND type = N'FN')
-	DROP FUNCTION dbo.udf_GetDomicilioCalleLocalidadCompleto
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'dbo.udfObtenerDomicilioCalleLocalidadCompleto') AND type = N'FN')
+	DROP FUNCTION dbo.udfObtenerDomicilioCalleLocalidadCompleto
 GO
 
-CREATE FUNCTION udf_GetDomicilioCalleLocalidadCompleto 
+CREATE FUNCTION udfObtenerDomicilioCalleLocalidadCompleto 
 (	
 	@Calle1 varchar(100),
 	@Numero varchar(10),
@@ -264,7 +264,7 @@ BEGIN
 	DECLARE @ReturnValue varchar(400)
 	DECLARE @LocalidadNombre varchar(100)
 
-	SET @ReturnValue = dbo.udf_GetDomicilioCalleCompleto(@Calle1, @Numero, @Piso, @Departamento, @Calle2, @Calle3, @Barrio)
+	SET @ReturnValue = dbo.udfObtenerDomicilioCalleCompleto(@Calle1, @Numero, @Piso, @Departamento, @Calle2, @Calle3, @Barrio)
 	SET @LocalidadNombre = (SELECT Nombre FROM Localidad WHERE IDProvincia = @IDProvincia AND IDLocalidad = @IDLocalidad)
 	IF @ReturnValue <> ''
 		BEGIN
@@ -285,11 +285,11 @@ GO
 -- Create date: 2015-06-26
 -- Description:	Devuelve el Domicilio (Calle + Codigo Postal + Localidad + Provincia) completo
 -- =============================================
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'dbo.udf_GetDomicilioCompleto') AND type = N'FN')
-	DROP FUNCTION dbo.udf_GetDomicilioCompleto
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'dbo.udfObtenerDomicilioCompleto') AND type = N'FN')
+	DROP FUNCTION dbo.udfObtenerDomicilioCompleto
 GO
 
-CREATE FUNCTION udf_GetDomicilioCompleto 
+CREATE FUNCTION udfObtenerDomicilioCompleto 
 (	
 	@Calle1 varchar(100),
 	@Numero varchar(10),
@@ -309,7 +309,7 @@ BEGIN
 
 	SET @ProvinciaNombre = (SELECT Nombre FROM Provincia WHERE IDProvincia = @IDProvincia)
 
-	SET @ReturnValue = dbo.udf_GetDomicilioCalleCompleto(@Calle1, @Numero, @Piso, @Departamento, @Calle2, @Calle3, @Barrio)
+	SET @ReturnValue = dbo.udfObtenerDomicilioCalleCompleto(@Calle1, @Numero, @Piso, @Departamento, @Calle2, @Calle3, @Barrio)
 	SET @CodigoPostalLocalidad = dbo.udf_GetCodigoPostalLocalidad(@CodigoPostal, @IDProvincia, @IDLocalidad)
 	IF @ReturnValue <> ''
 		BEGIN
