@@ -220,3 +220,30 @@ BEGIN
 	RETURN (CASE WHEN (@YEAR % 4 = 0 AND @YEAR % 100 <> 0) OR @YEAR % 400 = 0 THEN 1 ELSE 0 END)
 END
 GO
+
+
+
+-- =============================================
+-- Author:		Tomás A. Cardoner
+-- Create date: 2021-09-03
+-- Description:	Returns a string with hours and minutes from minutes
+-- =============================================
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'dbo.udf_GetHoursAndMinutesFromMinutes') AND type = N'FN')
+	DROP FUNCTION dbo.udf_GetHoursAndMinutesFromMinutes
+GO
+
+CREATE FUNCTION udf_GetHoursAndMinutesFromMinutes
+(
+	@Minutes int
+) RETURNS varchar(10)
+AS
+BEGIN
+	DECLARE @Hours int
+	DECLARE @RemainderMinutes tinyint
+
+	SET @Hours = @Minutes / 60
+	SET @RemainderMinutes = @Minutes % 60
+
+	RETURN CAST(@Hours AS varchar(10)) + ':' + RIGHT('00' + CAST(@RemainderMinutes AS varchar(2)), 2)
+END
+GO
