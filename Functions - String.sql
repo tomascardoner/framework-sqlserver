@@ -73,3 +73,24 @@ RETURNS varchar(8000) AS
 
 	END
 GO
+
+
+
+-- =============================================
+-- Author:		Tomás A. Cardoner
+-- Create date: 2021-10-31
+-- Description:	Returns 'X' char if both input values are equal
+-- =============================================
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'dbo.udf_EqualStringValuesAsXChar') AND type = N'FN')
+	DROP FUNCTION dbo.udf_EqualStringValuesAsXChar
+GO
+
+CREATE FUNCTION udf_EqualStringValuesAsXChar
+(
+	@Value1 varchar(max),
+	@Value2 varchar(max)
+) RETURNS char(1) AS
+BEGIN
+	RETURN (CASE WHEN @Value1 = @Value2 THEN 'X' ELSE '' END)
+END
+GO
